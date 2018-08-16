@@ -1,6 +1,8 @@
 module StealthWebhook
   class Webhook
     attr_reader :errors
+    StructUser = Struct.new(:fb_id)
+
     def initialize
       @errors = {}
     end
@@ -40,7 +42,7 @@ module StealthWebhook
         return
       end
 
-      unless params.dig(:recipient, :assistido_id) || params.dig(:recipient, :assistido_cpf)
+      unless params.dig(:recipient, :assistido_id) || params.dig(:recipient, :assistido_cpf) || params.dig(:recipient, :fb_id)
         @errors= {message: ':recipient must have the follow keys: assistido_id ou assistido_cpf', code: 400, status: :bad_request}
         return
       end
@@ -48,12 +50,17 @@ module StealthWebhook
     end
 
     def recipient(params)
-      query_params = {
-        solar_id: params.dig(:recipient, :assistido_id),
-        cpf: params.dig(:recipient, :assistido_cpf)
-      }.compact
 
-      user = User.where(query_params).first
+      if params.dig(:recipient, :fb_id)
+        user = StructUser.new(params.dig(:recipient, :fb_id))
+      else
+        query_params = {
+          solar_id: params.dig(:recipient, :assistido_id),
+          cpf: params.dig(:recipient, :assistido_cpf)
+        }.compact
+
+        user = User.where(query_params).first
+      end
 
       @errors= {message: "recipient not found: #{query_params.to_json})", code: 404, status: :not_found} unless user
       user
