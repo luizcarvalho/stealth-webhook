@@ -9,12 +9,12 @@ module StealthWebhook
 
     def send_message(params)
         if validate_and_send_message(params)
-           [200, { message: 'Message sent with success' }]
+           [200, { message: 'Message sent with success' }.to_json]
         else
           [@errors[:status], @errors.to_json]
         end
       rescue => e
-        [500, { message: e.message }]
+        [500, { message: e.message }.to_json]
     end
 
 
