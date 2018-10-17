@@ -16,7 +16,7 @@ module Stealth
 
 
     def send_message(params, auth_token = nil)
-      return [401, 'Unauthorized: Invalid Token'] if ENV['WEHBOOK_AUTH_TOKEN'] && auth_token != "Token #{ENV['WEHBOOK_AUTH_TOKEN']}"
+      return [401, 'Unauthorized: Invalid Token'] if ENV['WEBHOOK_AUTH_TOKEN'] && auth_token != "Token #{ENV['WEBHOOK_AUTH_TOKEN']}"
 
       begin
         webhook = StealthWebhook::Webhook.new
